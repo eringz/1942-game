@@ -1,0 +1,181 @@
+<html>
+<head>
+	<title>1942 Game</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<audio autoplay>
+		<source src="nikki.mp3" type="audio/ogg">
+	</audio>
+	<div id='container'>
+		<div id='hero' style='top:510px; left:850px;'></div>
+		<div id='enemies'>
+	
+		</div>
+		<div id='bullets'>
+		</div>	
+	</div>
+
+	<div id='score'></div>
+
+
+	<!-- 
+		1. (Easy) Change the background of the game - Done
+	    2. (Easy) Get the hero to move up and down  - Done
+		3. (Easy) Get 7 enemies to show up instead of 4 at a time - Done
+		4. (Intermediate) Get another type of enemy airplane to show up - Done
+		5. (Advanced) Collision Detection for the airplanes – when the hero collides with the enemy, have your score go down by 500.
+		6. (Advanced) Collision Detection for the bullet – Have the score go up by 10 when an enemy is struck down.
+		7. (Advanced) Get the enemy to explode when it is hit
+		8. (Advanced) When the bullet hits, make a sound. 
+	-->
+
+<script>
+
+	var hero = {
+		x: 850,
+		y: 860
+	}
+
+	var enemies = [
+					{x: 250, y: 80}, 
+					{x: 450, y: 80}, 
+					{x: 680, y: 80}, 
+					{x: 827, y: 80}, 
+					{x: 1050, y: 80}, 
+					{x:1250, y:80}, 
+					{x:1450, y:80}];
+
+	var bullets = [];
+	var score = 1000;
+	var enemy_collision = false;
+	var bullet_collision = false;
+
+/*========================================================HERO SECTION===============================================================*/ 
+function displayHero(){
+	document.getElementById('hero').style['top'] = hero.y + "px";
+	document.getElementById('hero').style['left'] = hero.x + "px";
+}
+
+	document.onkeydown = function(e){
+		if(e.keyCode == 38){
+			hero.y -= 10;
+		}else if(e.keyCode == 40){
+			hero.y += 10;
+		}else if(e.keyCode == 37){
+			hero.x -= 10;
+		}else if(e.keyCode == 39){
+			hero.x += 10;
+		}
+		
+		if(e.keyCode == 32){
+			bullets.push({x: hero.x+5, y: hero.y-8});
+			displayBullets();
+		}
+		
+		displayHero();
+	}
+	
+/*========================================================ENEMY SECTION==============================================================*/ 
+
+function displayEnemies(){
+	var output  = "";
+	
+	for(var i=0; i<enemies.length; i++){
+		let enemy_class = i + 1;
+		output += "<div class='enemy"+enemy_class+"' style='top:"+enemies[i].y+"px; left:"+enemies[i].x+"px;'></div>";
+	}
+	document.getElementById('enemies').innerHTML = output;
+}
+
+function moveEnemies(){
+	for(var i=0; i<enemies.length; i++){
+		enemies[i].y += 1;
+		if(enemies[i].y > 900){
+			enemies[i].y = 0;
+			enemies[i].x = Math.random()*1580;
+		}
+	}
+}
+/*========================================================BULLETS SECTION==============================================================*/ 
+
+function displayBullets(){
+	var output  = "";
+	for(var i=0; i<bullets.length; i++){
+		output += "<div class='bullet' style='top:"+bullets[i].y+"px; left:"+bullets[i].x+"px;'></div>";
+		}
+		document.getElementById('bullets').innerHTML = output;
+	}
+
+	function moveBullets(){
+		for(var i=0; i<bullets.length; i++){
+			bullets[i].y -= 2;
+			
+			if(bullets[i].y < 0){
+				bullets[i] = bullets[bullets.length - 1];
+				bullets.pop();
+			}
+		}
+	}
+
+/*========================================================GAMEPLAY SECTION==============================================================*/ 
+	function displayScore(){
+		document.getElementById('score').innerHTML = score;
+	}
+
+	function airplaneCollide(){
+		// console.log('Hero: ',hero);
+		var enemy_class = i + 1;
+		for(var i = 0; i<enemies.length; i++){
+			let enemy_class = i + 1;
+			// console.log('Enemy'+enemy_class+': ',enemies[i]);
+			if(hero.x == enemies[i].x || hero.y == enemies[i].y){
+				enemy_collision = true;
+			}else{
+				enemy_collision = false;
+			}
+		}
+		if(enemy_collision == true){
+				score -= 500;
+		}
+	}	
+
+	function bulletCollide(){
+		// console.log('Hero: ',hero);
+		var enemy_class = i + 1;
+		for(var i = 0; i<enemies.length; i++){
+			for(var j = 0; j<bullets.length;j++){
+				let enemy_class = i + 1;
+			// console.log('Enemy'+enemy_class+': ',enemies[i]);
+				if(bullets[j].x == enemies[i].x || bullets[j].y == enemies[i].y){
+					bullet_collision = true;
+					console.log(bullet_collision);
+				}else{
+					bullet_collision = false;
+				}
+			}
+			console.log(bullet_collision);
+		}
+		if(bullet_collision == true){
+				score += 10;
+		}
+	}
+
+	function gameLoop(){
+		displayHero();
+		displayEnemies();
+		moveEnemies();
+		moveBullets();
+		displayBullets();
+		airplaneCollide();
+		bulletCollide
+		displayScore();
+	}
+
+	setInterval(gameLoop, 20);
+	
+</script>
+
+</body>
+</html>
+
